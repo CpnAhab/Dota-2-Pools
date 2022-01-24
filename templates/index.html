@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<head>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<style> @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap'); </style>
+<link href="/static/styles.css" rel="stylesheet">
+<meta charset="utf-8">
+<title>Dota 2 Hero Pools</title>
+</head>
+<form action="/request" method="post">
+    <div class="main">
+        <div id="imgs" class="heropools"> </div>
+        <div class="submissions">
+        <h1>Dota 2 Hero Pool Generator</h1>
+            <div class="buttonblock">
+                <button type="submit" name="op" value="random">Choose a random hero</button>
+            </div>
+        <h3>{{ hero }}</h3>
+            <div class="buttonblock">
+                <button type="submit" name="op" value="to_text">Convert to text</button>
+            </div>
+        <h3>{{ pool }}</h3>
+            <div class="buttonblock">
+                <button type="submit" name="op" value="download">Export as .txt</button>
+            </div>
+        <h3></h3>
+            <div class="buttonblock">
+                <button type="submit" name="op" value="to_sb">Add to SquireBot</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+var content = "";
+var imgs = document.getElementById("imgs");
+var str = [
+    'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
+    'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
+    'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king'];
+
+var agi = [
+    'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
+    'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
+    'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver'];
+
+var int = [
+    'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
+    'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
+    'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus'];
+
+content += '<h2>Strength <input type="checkbox" onchange="toggle(this, ' + "'str'" + ')"></h2>';
+str.forEach(function(entry) {
+    content += '<input type="checkbox" id="hero" class="str" name='+entry+' style="background: url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/'+entry+'.png); background-size: cover;">';
+});
+
+content += '<h2>Agility <input type="checkbox" onchange="toggle(this, ' + "'agi'" + ')"></h2>';
+agi.forEach(function(entry) {
+    content += '<input type="checkbox" id="hero" class="agi" name='+entry+' style="background: url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/'+entry+'.png); background-size: cover;">';
+});
+
+content += '<h2>Intelligence <input type="checkbox" onchange="toggle(this, ' + "'int'" + ')"></h2>';
+int.forEach(function(entry) {
+    content += '<input type="checkbox" id="hero" class="int" name='+entry+' style="background: url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/'+entry+'.png); background-size: cover;">';
+});
+imgs.innerHTML = content;
+
+function toggle(checkedBoxElem, attribute){
+    if (checkedBoxElem.checked){
+        $('.' + attribute).prop('checked', true);
+    } else {
+        $('.' + attribute).prop('checked', false);
+    }
+}
+</script>
+</html>
