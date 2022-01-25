@@ -89,7 +89,8 @@ def translate_names(pool: list) -> str:
 
     conn, curs = connect(DB_URL)
     results = curs.execute(query)
-    print(results)
+    print("query: ", query)
+    print("results: ", results)
     results = ", ".join(results)
     close(conn, curs)
 
