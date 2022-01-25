@@ -63,9 +63,14 @@ def as_text():
     elif request.form["op"] == "download":
 
         path = "hero_pool.txt"
-        with open(path, 'w') as f:
-            f.write(translate_names(pool))
-        return send_file(path, as_attachment=True)
+        if not pool:
+            message = "No heroes selected."
+            return render_template("index.html", message=message)
+
+        else:
+            with open(path, 'w') as f:
+                f.write(translate_names(pool))
+            return send_file(path, as_attachment=True)
 
     elif request.form["op"] == "to_sb":
         return redirect("/")
