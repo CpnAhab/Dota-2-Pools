@@ -83,7 +83,8 @@ def compile_heroes():
 
 def translate_names(pool: list) -> str:
 
-    pool = "(" + ", ".join(pool) + ")"
+    # pool = "('" + "', '".join(pool) + "')"
+    pool = tuple(pool) if len(pool) > 1 else "('" + pool[0] + "')"
     query = f"SELECT externalname FROM heroes WHERE internalname IN {pool}"
 
     conn, curs = connect(DB_URL)
