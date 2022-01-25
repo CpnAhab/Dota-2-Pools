@@ -92,7 +92,7 @@ def translate_names(pool: list) -> str:
     results = [x[0] for x in curs.fetchall()]
     print("query: ", query)
     print("results: ", results)
-    results = ", ".join()
+    results = ", ".join(results)
     close(conn, curs)
 
     return results
