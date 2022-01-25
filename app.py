@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, render_template, request, session, redirect
+from flask import Flask, flash, render_template, request, session, redirect, send_file
 import random
 import psycopg2
 
@@ -61,7 +61,11 @@ def as_text():
         return render_template("index.html", pool=pool)
 
     elif request.form["op"] == "download":
-        return redirect("/")
+
+        path = "/hero_pool.txt"
+        with open("hero_pool.txt", 'w') as f:
+            f.write(translate_names(pool))
+        return send_file(path, as_attachment=True)
 
     elif request.form["op"] == "to_sb":
         return redirect("/")
