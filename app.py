@@ -84,7 +84,7 @@ def compile_heroes():
 def translate_names(pool: list) -> str:
 
     pool = "(" + ", ".join(pool) + ")"
-    query = f"SELECT \"ExternalName\" FROM heroes WHERE \"InternalName\" IN {pool}"
+    query = f"SELECT externalname FROM heroes WHERE internalname IN {pool}"
 
     conn, curs = connect(DB_URL)
     results = ", ".join(curs.execute(query))
