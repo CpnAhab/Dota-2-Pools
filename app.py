@@ -33,8 +33,11 @@ def after_request(response):
     return response
 
 @app.route("/")
-def index():
-    return render_template("index.html")
+def index(request):
+    r = requests.get('https://httpbin.org/status/418')
+    print(r.text)
+    return HttpResponse('<pre>' + r.text + '</pre>')
+    # return render_template("index.html")
 
 @app.route("/request", methods=["POST"])
 def as_text():
