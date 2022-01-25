@@ -3,7 +3,17 @@ from flask import Flask, flash, render_template, request, session, redirect
 import random
 import psycopg2
 
-# DB = os.environ['DATABASE_URL']
+DB_URL = os.environ['DATABASE_URL']
+
+def connect(url: str):
+    conn = psycopg2.connect(url, sslmode="require")
+    curs = conn.cursor()
+    return conn, curs
+
+def close(conn: psycopg2.connection, curs: psycopg2.cursor):
+    conn.commit()
+    conn.close()
+    cur.close()
 
 
 str = [
@@ -31,6 +41,33 @@ def index():
 @app.route("/request", methods=["POST"])
 def as_text():
 
+    pool = compile_heroes()
+
+    if request.form["op"] == "random":
+        if not pool:
+            hero = "No heroes to choose from."
+        else:
+            rand_hero = list(random.choice(pool))
+            hero = f"{translate_names(rand_hero)} chosen from {len(pool)} heroes."
+        
+        return render_template("index.html", hero=hero)
+
+    elif request.form["op"] == "to_text":
+        if not pool:
+            pool = "No heroes selected."
+        else:
+            pool = translate_names(pool)
+
+        return render_template("index.html", pool=pool)
+
+    elif request.form["op"] == "download":
+        return redirect("/")
+
+    elif request.form["op"] == "to_sb":
+        return redirect("/")
+
+def compile_heroes():
+    
     pool = list()
     for hero in str:
         if request.form.get(hero):
@@ -41,28 +78,20 @@ def as_text():
     for hero in int:
         if request.form.get(hero):
             pool.append(hero)
+    
+    return pool
 
-    if request.form["op"] == "random":
-        if not pool:
-            hero = "No heroes to choose from."
-        else:
-            hero = f"{random.choice(pool)} chosen from {len(pool)} heroes."
-        
-        return render_template("index.html", hero=hero)
+def translate_names(pool: list) -> str:
 
-    elif request.form["op"] == "to_text":
-        if not pool:
-            pool = "No heroes selected."
-        else:
-            pool = ", ".join(pool)
+    query = f"SELECT ExternalName FROM heroes WHERE InternalName IN {pool}"
 
-        return render_template("index.html", pool=pool)
+    conn, curs = connect(DB_URL)
+    results = ", ".join(curs.execute(query))
+    close(conn, curs)
 
-    elif request.form["op"] == "download":
-        return redirect("/")
+    return results
 
-    elif request.form["op"] == "to_sb":
-        return redirect("/")
+
 
 if __name__ == '__main__':
     app.run(port=5000)
