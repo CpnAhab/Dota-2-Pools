@@ -64,3 +64,5 @@ def as_text():
     elif request.form["op"] == "to_sb":
         return redirect("/")
 
+if __name__ == '__main__':
+    app.run(port=5000)
