@@ -1,6 +1,10 @@
 import os
 from flask import Flask, flash, render_template, request, session, redirect
 import random
+import psycopg2
+
+# DB = os.environ['DATABASE_URL']
+
 
 str = [
     'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
@@ -19,25 +23,10 @@ int = [
 
 app = Flask(__name__)
 
-# Ensure templates are auto-reloaded
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-#Test commit
-
-# Ensure responses aren't cached
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
 
 @app.route("/")
-def index(request):
-    r = requests.get('https://httpbin.org/status/418')
-    print(r.text)
-    return HttpResponse('<pre>' + r.text + '</pre>')
-    # return render_template("index.html")
+def index():
+    return render_template("index.html")
 
 @app.route("/request", methods=["POST"])
 def as_text():
