@@ -10,7 +10,7 @@ def connect(url: str):
     curs = conn.cursor()
     return conn, curs
 
-def close(conn: psycopg2.connection, curs: psycopg2.cursor):
+def close(conn, curs):
     conn.commit()
     conn.close()
     cur.close()
