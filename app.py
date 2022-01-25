@@ -13,7 +13,7 @@ def connect(url: str):
 def close(conn, curs):
     conn.commit()
     conn.close()
-    cur.close()
+    curs.close()
 
 
 str = [
