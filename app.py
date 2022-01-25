@@ -88,6 +88,7 @@ def translate_names(pool: list) -> str:
     query = f"SELECT externalname FROM heroes WHERE internalname IN {pool}"
 
     conn, curs = connect(DB_URL)
+    console.log(results)
     results = ", ".join(curs.execute(query))
     close(conn, curs)
 
