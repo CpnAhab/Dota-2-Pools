@@ -47,7 +47,7 @@ def as_text():
         if not pool:
             hero = "No heroes to choose from."
         else:
-            rand_hero = list(random.choice(pool))
+            rand_hero = [random.choice(pool)]
             hero = f"{translate_names(rand_hero)} chosen from {len(pool)} heroes."
         
         return render_template("index.html", hero=hero)
@@ -83,7 +83,8 @@ def compile_heroes():
 
 def translate_names(pool: list) -> str:
 
-    query = f"SELECT ExternalName FROM heroes WHERE InternalName IN {tuple(pool)}"
+    pool = "(" + ", ".join(pool) + ")"
+    query = f"SELECT ExternalName FROM heroes WHERE InternalName IN {pool}"
 
     conn, curs = connect(DB_URL)
     results = ", ".join(curs.execute(query))
