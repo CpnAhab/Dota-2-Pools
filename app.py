@@ -62,8 +62,8 @@ def as_text():
 
     elif request.form["op"] == "download":
 
-        path = "/hero_pool.txt"
-        with open("hero_pool.txt", 'w') as f:
+        path = "hero_pool.txt"
+        with open(path, 'w') as f:
             f.write(translate_names(pool))
         return send_file(path, as_attachment=True)
 
