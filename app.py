@@ -1,8 +1,12 @@
 import os
 from flask import Flask, flash, render_template, request, session, redirect, send_file
+from flask_restful import Api, Resource, reqparse
+from api.ApiHandler import ApiHandler
+#from flask_cors import CORS
 import random
 import psycopg2
 
+# UNCOMMENT FOR HOSTING
 DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
@@ -31,8 +35,9 @@ int = [
     'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
     'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_url_path = '', static_folder = "ui/build")
+#CORS(app)
+api = Api(app)
 
 @app.route("/")
 def index():
@@ -105,6 +110,8 @@ def translate_names(pool: list) -> str:
     close(conn, curs)
 
     return results
+
+api.add_resource(ApiHandler, '/flask/hello')
 
 
 

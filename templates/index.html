@@ -3,7 +3,7 @@
 <head>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <style> @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap'); </style>
-<link href="/static/styles.css" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
 <meta charset="utf-8">
 <title>Dota 2 Hero Pools</title>
 </head>
@@ -64,6 +64,9 @@ int.forEach(function(entry) {
     content += '<input type="checkbox" id="hero" class="int" name='+entry+' style="background: url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/'+entry+'.png); background-size: cover;">';
 });
 imgs.innerHTML = content;
+
+</script>
+<script>
 
 function toggle(checkedBoxElem, attribute){
     if (checkedBoxElem.checked){
