@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, render_template, request, session, redirect, send_file
+from flask import Flask, flash, render_template, request, session, redirect, send_file, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from api.ApiHandler import ApiHandler
 #from flask_cors import CORS
@@ -39,9 +39,9 @@ app = Flask(__name__, static_url_path = '', static_folder = "ui/build")
 #CORS(app)
 api = Api(app)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/", defaults={'path':''})
+def index(path):
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/request", methods=["POST"])
 def as_text():
