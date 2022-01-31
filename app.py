@@ -1,13 +1,11 @@
 import os
-from flask import Flask, flash, render_template, request, session, redirect, send_file, send_from_directory
+from flask import Flask, flash, render_template, request, session, redirect, send_file, send_from_directory, jsonify
 from flask_restful import Api, Resource, reqparse
-from api.ApiHandler import ApiHandler
-#from flask_cors import CORS
 import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-DB_URL = os.environ['DATABASE_URL']
+#DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -20,28 +18,56 @@ def close(conn, curs):
     curs.close()
 
 
-str = [
-    'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
-    'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
-    'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king']
+# str = [
+#     'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
+#     'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
+#     'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king']
 
-agi = [
-    'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
-    'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
-    'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver']
+# agi = [
+#     'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
+#     'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
+#     'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver']
 
-int = [
-    'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
-    'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
-    'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
+# int = [
+#     'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
+#     'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
+#     'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
 
-app = Flask(__name__, static_url_path = '', static_folder = "ui/build")
-#CORS(app)
-api = Api(app)
+app = Flask(__name__, static_url_path = '', static_folder = "ui/src")
 
 @app.route("/", defaults={'path':''})
 def index(path):
-    return send_from_directory(app.static_folder, 'index.html')
+    return render_template('index.html')
+
+@app.route("/test")
+def populate_test():
+    response = {"str": ["abaddon"], 'agi':['sniper'], 'int':['bane'], 'test': 'boop'}
+    return response
+
+@app.route("/api/heroes")
+def populate():
+
+    print("populating")
+    conn, curs = connect(DB_URL)
+    print("connected")
+    attributes = get_attributes(curs)
+
+    hero_list = dict()
+
+    for a in attributes:
+        query = f"""SELECT internalname FROM heroes
+            INNER JOIN attributes ON heroes.attrID = attributes.id
+            WHERE attributes.attribute = {a}
+            ORDER BY heroes.id"""
+
+        curs.execute(query)
+        result = [x[0] for x in curs.fetchall()]
+        hero_list[a] = result
+    
+    close(conn, curs)
+
+    resp = jsonify(hero_list)
+    return resp
 
 @app.route("/request", methods=["POST"])
 def as_text():
@@ -97,7 +123,6 @@ def compile_heroes():
 
 def translate_names(pool: list) -> str:
 
-    # pool = "('" + "', '".join(pool) + "')"
     pool = tuple(pool) if len(pool) > 1 else "('" + pool[0] + "')"
     query = f"SELECT externalname FROM heroes WHERE internalname IN {pool};"
 
@@ -111,8 +136,10 @@ def translate_names(pool: list) -> str:
 
     return results
 
-api.add_resource(ApiHandler, '/flask/hello')
-
+def get_attributes(curs) -> list:
+    query = "SELECT Attribute FROM attributes ORDER BY id;"
+    curs.execute(query)
+    return [x[0] for x in curs.fetchall()]
 
 
 if __name__ == '__main__':
