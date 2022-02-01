@@ -71,7 +71,7 @@ def populate():
 def to_random():
     selected = request.get_json(force = True)
     if selected:
-        return {"choice" : random.choice(selected['checkedHeroes'])}
+        return {"choice" : translate_names(random.choice(selected['checkedHeroes']))}
     else:
         return {"choice" : "None found"}
 
@@ -81,7 +81,7 @@ def to_text():
     selected = request.get_json(force = True)
     if selected:
         print(selected['checkedHeroes'])
-        return {"choice" : ", ".join(selected['checkedHeroes'])}
+        return {"choice" : translate_names(join(selected['checkedHeroes']))}
     else:
         return {"choice" : "None found"}
 
