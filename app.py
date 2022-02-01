@@ -5,7 +5,7 @@ import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-DB_URL = os.environ['DATABASE_URL']
+#DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -33,10 +33,14 @@ int = [
     'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
     'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
 
-app = Flask(__name__, static_url_path = '', static_folder = "ui/build")
+app = Flask(__name__, static_url_path = '/', static_folder = "ui/build")
 
 @app.route("/", defaults={'path':''})
 def index(path):
+    return app.send_static_file('index.html')
+
+@app.errorhandler(404)
+def not_found(e):
     return app.send_static_file('index.html')
 
 @app.route("/test")
