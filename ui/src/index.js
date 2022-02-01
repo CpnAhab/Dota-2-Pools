@@ -77,15 +77,15 @@ function Page() {
 
     // Change test to /api/heroes if intending to fetch heroes from DB.
     useEffect(() => {
-        // console.log("fetching heroes");
-        // fetch('/test')
-        // .then(console.log("accessed /test"))
-        // .then(res => res.json())
-        // .then(data => {
-        //     setStr(data.str);
-        //     setAgi(data.agi);
-        //     setInt(data.int);
-        // });
+         console.log("fetching heroes");
+         fetch('/api/heroes')
+         .then(console.log("accessed /test"))
+         .then(res => res.json())
+         .then(data => {
+             setStr(data.str);
+             setAgi(data.agi);
+             setInt(data.int);
+         });
     }, []);
 
     const handleHeroChange = (position) => {
