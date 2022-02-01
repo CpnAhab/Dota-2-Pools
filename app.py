@@ -70,7 +70,7 @@ def populate():
 @app.route("/api/random", methods=["POST"])
 def to_random():
     selected = request.get_json(force = True)
-    if selected:
+    if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
         return {"choice" : translate_names([random.choice(selected['checkedHeroes'])])}
     else:
         return {"choice" : "None found"}
@@ -79,7 +79,7 @@ def to_random():
 def to_text():
 
     selected = request.get_json(force = True)
-    if selected:
+    if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
         print(selected['checkedHeroes'])
         return {"choice" : translate_names(selected['checkedHeroes'])}
     else:
@@ -90,7 +90,7 @@ def download():
     selected = request.get_json(force = True)
 
     path = "hero_pool.txt"
-    if not selected:
+    if not (selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0):
         message = "No heroes selected."
         print(message)
         return {"message" : message}
