@@ -55,7 +55,7 @@ def populate():
     for a in attributes:
         query = f"""SELECT internalname FROM heroes
             INNER JOIN attributes ON heroes.attrID = attributes.id
-            WHERE attributes.attribute = {a}
+            WHERE attributes.attribute = {"\"" + a + "\""}
             ORDER BY heroes.id"""
 
         curs.execute(query)
