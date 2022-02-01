@@ -5,7 +5,7 @@ import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-#DB_URL = os.environ['DATABASE_URL']
+DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -47,9 +47,7 @@ def populate_test():
 @app.route("/api/heroes")
 def populate():
 
-    print("populating")
     conn, curs = connect(DB_URL)
-    print("connected")
     attributes = get_attributes(curs)
 
     hero_list = dict()
