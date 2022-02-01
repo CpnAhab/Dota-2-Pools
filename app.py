@@ -53,12 +53,12 @@ def populate():
     hero_list = dict()
 
     for a in attributes:
-        query = f"""SELECT internalname FROM heroes
+        query = """SELECT internalname FROM heroes
             INNER JOIN attributes ON heroes.attrID = attributes.id
-            WHERE attributes.attribute = {"\"" + a + "\""}
+            WHERE attributes.attribute = ?
             ORDER BY heroes.id"""
 
-        curs.execute(query)
+        curs.execute(query, a)
         result = [x[0] for x in curs.fetchall()]
         hero_list[a] = result
     
