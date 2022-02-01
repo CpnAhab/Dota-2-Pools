@@ -18,30 +18,30 @@ def close(conn, curs):
     curs.close()
 
 
-# str = [
-#     'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
-#     'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
-#     'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king']
+str = [
+    'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
+    'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
+    'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king']
 
-# agi = [
-#     'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
-#     'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
-#     'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver']
+agi = [
+    'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
+    'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
+    'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver']
 
-# int = [
-#     'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
-#     'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
-#     'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
+int = [
+    'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
+    'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
+    'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
 
-app = Flask(__name__, static_url_path = '', static_folder = "ui/src")
+app = Flask(__name__, static_url_path = '/', static_folder = "ui/build")
 
 @app.route("/", defaults={'path':''})
 def index(path):
-    return render_template('index.html')
+    return app.send_static_file('index.html')
 
 @app.route("/test")
 def populate_test():
-    response = {"str": ["abaddon"], 'agi':['sniper'], 'int':['bane'], 'test': 'boop'}
+    response = {"str": str, 'agi':agi, 'int':int, 'test': 'boop'}
     return response
 
 @app.route("/api/heroes")
@@ -68,6 +68,42 @@ def populate():
 
     resp = jsonify(hero_list)
     return resp
+
+@app.route("/api/random", methods=["POST"])
+def to_random():
+    selected = request.get_json(force = True)
+    if selected:
+        return {"choice" : random.choice(selected['checkedHeroes'])}
+    else:
+        return {"choice" : "None found"}
+
+@app.route("/api/to_text", methods=["POST"])
+def to_text():
+
+    selected = request.get_json(force = True)
+    if selected:
+        print(selected['checkedHeroes'])
+        return {"choice" : ", ".join(selected['checkedHeroes'])}
+    else:
+        return {"choice" : "None found"}
+
+@app.route("/api/download", methods=["POST"])
+def download():
+    selected = request.get_json(force = True)
+
+    path = "hero_pool.txt"
+    if not selected:
+        message = "No heroes selected."
+        print(message)
+        return {"message" : message}
+
+    else:
+        print("heroes are selected.")
+        with open(path, 'w') as f:
+            f.write(", ".join(selected["checkedHeroes"]))
+        return send_file(path, as_attachment=True)
+
+
 
 @app.route("/request", methods=["POST"])
 def as_text():
