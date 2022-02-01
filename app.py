@@ -33,7 +33,7 @@ int = [
     'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
     'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
 
-app = Flask(__name__, static_url_path = '/', static_folder = "./ui/build")
+app = Flask(__name__, static_url_path = '/', static_folder = os.path.abspath("ui/build"))
 
 @app.route("/")
 def index():
