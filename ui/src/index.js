@@ -182,6 +182,7 @@ function Page() {
 
     return (
         <div className="main">
+            <style> @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap'); </style>
             <div className="heropools">
                 {renderHeroesByAttribute("Strength", str, 0)}
                 {renderHeroesByAttribute("Agility", agi, str.length)}
