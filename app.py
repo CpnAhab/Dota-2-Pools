@@ -39,6 +39,10 @@ app = Flask(__name__, static_url_path = '/', static_folder = "./ui/build")
 def index():
     return app.send_static_file('index.html')
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
+
 @app.route("/test")
 def populate_test():
     response = {"str": str, 'agi':agi, 'int':int, 'test': 'boop'}
