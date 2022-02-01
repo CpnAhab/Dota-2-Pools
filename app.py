@@ -17,28 +17,13 @@ def close(conn, curs):
     conn.close()
     curs.close()
 
-
-str = [
-    'abaddon', 'alchemist', 'axe', 'beastmaster', 'brewmaster', 'bristleback', 'centaur', 'chaos_knight', 'rattletrap', 'dawnbreaker', 'doom_bringer', 'dragon_knight', 'earth_spirit', 'earthshaker',
-    'elder_titan', 'huskar', 'wisp', 'kunkka', 'legion_commander', 'life_stealer', 'lycan', 'magnataur', 'marci', 'mars', 'night_stalker', 'omniknight', 'phoenix',
-    'pudge', 'sand_king', 'slardar', 'snapfire', 'spirit_breaker', 'sven', 'tidehunter', 'shredder', 'tiny', 'treant', 'tusk', 'abyssal_underlord', 'undying', 'skeleton_king']
-
-agi = [
-    'antimage', 'arc_warden', 'bloodseeker', 'bounty_hunter', 'broodmother', 'clinkz', 'drow_ranger', 'ember_spirit', 'faceless_void', 'gyrocopter', 'hoodwink', 
-    'juggernaut', 'lone_druid', 'luna', 'medusa', 'meepo', 'mirana', 'monkey_king', 'morphling', 'naga_siren', 'nyx_assassin', 'pangolier', 'phantom_assassin', 'phantom_lancer',
-    'razor', 'riki', 'nevermore', 'slark', 'sniper', 'spectre', 'templar_assassin', 'terrorblade', 'troll_warlord', 'ursa', 'vengefulspirit', 'venomancer', 'viper', 'weaver']
-
-int = [
-    'ancient_apparition', 'bane', 'batrider', 'chen', 'crystal_maiden', 'dark_seer', 'dark_willow', 'dazzle', 'death_prophet', 'disruptor', 'enchantress', 'enigma', 'grimstroke', 'invoker',
-    'jakiro', 'keeper_of_the_light', 'leshrac', 'lich', 'lina', 'lion', 'furion', 'necrolyte', 'ogre_magi', 'oracle', 'obsidian_destroyer', 'puck', 'pugna', 'queenofpain', 'rubick',
-    'shadow_demon', 'shadow_shaman', 'silencer', 'skywrath_mage', 'storm_spirit', 'techies', 'tinker', 'visage', 'void_spirit', 'warlock', 'windrunner', 'winter_wyvern', 'witch_doctor', 'zuus']
-
 app = Flask(__name__, static_url_path = '/', static_folder = "ui/build")
 
 @app.route("/")
 def index():
     return app.send_static_file('index.html')
 
+#Unused w/ react.
 @app.route("/test")
 def populate_test():
     response = {"str": str, 'agi':agi, 'int':int, 'test': 'boop'}
@@ -80,7 +65,6 @@ def to_text():
 
     selected = request.get_json(force = True)
     if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
-        print(selected['checkedHeroes'])
         return {"choice" : translate_names(selected['checkedHeroes'])}
     else:
         return {"choice" : "None found"}
@@ -90,70 +74,14 @@ def download():
     selected = request.get_json(force = True)
 
     path = "hero_pool.txt"
-    if not (selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0):
-        message = "No heroes selected."
-        print(message)
-        return {"message" : message}
-
-    else:
-        print("heroes are selected.")
+    if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
         with open(path, 'w') as f:
             f.write(", ".join(selected["checkedHeroes"]))
         return send_file(path, as_attachment=True)
 
-
-
-@app.route("/request", methods=["POST"])
-def as_text():
-
-    pool = compile_heroes()
-
-    if request.form["op"] == "random":
-        if not pool:
-            hero = "No heroes to choose from."
-        else:
-            rand_hero = [random.choice(pool)]
-            hero = f"{translate_names(rand_hero)} chosen from {len(pool)} heroes."
-        
-        return render_template("index.html", hero=hero)
-
-    elif request.form["op"] == "to_text":
-        if not pool:
-            pool = "No heroes selected."
-        else:
-            pool = translate_names(pool)
-
-        return render_template("index.html", pool=pool)
-
-    elif request.form["op"] == "download":
-
-        path = "hero_pool.txt"
-        if not pool:
-            message = "No heroes selected."
-            return render_template("index.html", message=message)
-
-        else:
-            with open(path, 'w') as f:
-                f.write(translate_names(pool))
-            return send_file(path, as_attachment=True)
-
-    elif request.form["op"] == "to_sb":
-        return redirect("/")
-
-def compile_heroes():
-    
-    pool = list()
-    for hero in str:
-        if request.form.get(hero):
-            pool.append(hero)
-    for hero in agi:
-        if request.form.get(hero):
-            pool.append(hero)
-    for hero in int:
-        if request.form.get(hero):
-            pool.append(hero)
-    
-    return pool
+    else:
+        message = "No heroes selected."
+        return {"message" : message}
 
 def translate_names(pool: list) -> str:
 
