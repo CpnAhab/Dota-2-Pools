@@ -4,10 +4,6 @@ import './index.css';
 import $ from 'jquery';
 import { heroes } from './heroes.js'
 
-// Change proxy.
-// Uncomment DB_URL line.
-// 
-
 function Hero(props) {
     
     return (
@@ -101,8 +97,12 @@ function Page() {
         setCheckedHeroes(updateChecked);
     };
 
-    // THIS ISN'T RECORDING CHECKED HEROES RIGHT NOW.
-    function handleAttributeChange(e) {
+    function handleAttributeChange(e, attribute, startVal) {
+
+        for(var i = startVal; i < startVal + attribute.length; i++) {
+            checkedHeroes[i] = e.target.checked;
+        }
+
         if (e.target.checked) {
             $('.' + e.target.id).prop('checked', true);
         } else {
@@ -173,7 +173,7 @@ function Page() {
             attrStr={attrStr}
             attribute={attribute}
             startVal={startVal}
-            onChange={handleAttributeChange}
+            onChange={(e) => handleAttributeChange(e, attribute, startVal)}
             onHeroChange={handleHeroChange}
             checkedHeroes={checkedHeroes}
             />
