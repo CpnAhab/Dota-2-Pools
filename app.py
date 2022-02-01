@@ -55,10 +55,10 @@ def populate():
     for a in attributes:
         query = """SELECT internalname FROM heroes
             INNER JOIN attributes ON heroes.attrID = attributes.id
-            WHERE attributes.attribute = ?
+            WHERE attributes.attribute = %s
             ORDER BY heroes.id"""
 
-        curs.execute(query, a)
+        curs.execute(query, (a,))
         result = [x[0] for x in curs.fetchall()]
         hero_list[a] = result
     
