@@ -36,7 +36,7 @@ int = [
 app = Flask(__name__, static_url_path = '/', static_folder = "./ui/build")
 
 @app.route("/")
-def index(path):
+def index():
     return app.send_static_file('index.html')
 
 @app.route("/test")
