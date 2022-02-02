@@ -66,7 +66,7 @@ function Page() {
         fetch("/api/random", {
             method:"POST",
             headers:{
-                "content_type":"application/json",
+                "Content-Type":"application/json",
             },
             body:JSON.stringify({"checkedHeroes": _genChecked()})
             }
@@ -81,7 +81,7 @@ function Page() {
         fetch("/api/to_text", {
             method:"POST",
             headers:{
-                "content_type":"application/json",
+                "Content-Type":"application/json",
             },
             body:JSON.stringify({"checkedHeroes": _genChecked()})
             }
@@ -95,12 +95,20 @@ function Page() {
 
         fetch("/api/download", {
             method:"POST",
-            headers:{
-                "content_type":"application/json",
-            },
+            headers:{ "Content-Type":"application/json" },
             body:JSON.stringify({"checkedHeroes": _genChecked()})
             }
         ).then(setStatus("File download started."));        
+    }
+
+    function handleTest() {
+
+        fetch("/test", {
+            method: "POST",
+            headers:{ "Content-Type":"application/json" },
+            body:JSON.stringify({"test": "test content"})
+            }
+        ).then(console.log("received answer"));
     }
 
     function renderHeroesByAttribute(attrStr, attribute, startVal) {
@@ -130,7 +138,7 @@ function Page() {
                 <Button value={"random"} text={"Choose a random hero"} onClick={handleRandom} />
                 <Button value={"to_text"} text={"Convert to text"} onClick={handleToText} />
                 <Button value={"download"} text={"Export as .txt"} onClick={handleDownload} />
-                <Button value={"to_sb"} text={"Add to SquireBot"} onClick={handleRandom} />
+                <Button value={"to_sb"} text={"Add to SquireBot"} onClick={handleTest} />
                 <h3>{status}</h3>
             </div>
         </div>

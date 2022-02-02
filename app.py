@@ -5,7 +5,7 @@ import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-DB_URL = os.environ['DATABASE_URL']
+#DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -24,8 +24,10 @@ def index():
     return app.send_static_file('index.html')
 
 #Unused w/ react.
-@app.route("/test")
+@app.route("/test", methods=["POST"])
 def populate_test():
+    test = request.get_json()
+    print(format(test))
     response = {"str": "str", 'agi':"agi", 'int':"int", 'test': 'boop'}
     return response
 
