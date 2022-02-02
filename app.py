@@ -5,7 +5,7 @@ import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-#DB_URL = os.environ['DATABASE_URL']
+DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -56,7 +56,8 @@ def populate():
 
 @app.route("/api/random", methods=["POST"])
 def to_random():
-    selected = request.get_json(force = True)
+    selected = request.get_json()
+
     if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
         return {"choice" : translate_names([random.choice(selected['checkedHeroes'])])}
     else:
@@ -64,8 +65,8 @@ def to_random():
 
 @app.route("/api/to_text", methods=["POST"])
 def to_text():
+    selected = request.get_json()
 
-    selected = request.get_json(force = True)
     if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
         return {"choice" : translate_names(selected['checkedHeroes'])}
     else:
@@ -73,7 +74,7 @@ def to_text():
 
 @app.route("/api/download", methods=["POST"])
 def download():
-    selected = request.get_json(force = True)
+    selected = request.get_json()
 
     path = "hero_pool.txt"
     if selected['checkedHeroes'] and len(selected['checkedHeroes']) > 0:
