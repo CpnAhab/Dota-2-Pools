@@ -13,6 +13,7 @@ function Hero(props) {
         className={props.className} 
         name={props.name}
         onChange={props.onChange}
+        checked={props.checked}
         style={{background: "url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/" + props.name + ".png)", backgroundSize: "cover"}}
         />
     )
@@ -49,8 +50,8 @@ function HeroesByAttribute(props) {
         )
     }
 
-    var heroes = [];
-    for (var i = 0; i < props.attribute.length; i++) {
+    let heroes = [];
+    for (let i = 0; i < props.attribute.length; i++) {
         heroes.push(renderHero(i));
     }
 
@@ -97,17 +98,35 @@ function Page() {
         setCheckedHeroes(updateChecked);
     };
 
-    function handleAttributeChange(e, attribute, startVal) {
+    function handleAttributeChange(e, attrStr) {
 
-        for(var i = startVal; i < startVal + attribute.length; i++) {
-            checkedHeroes[i] = e.target.checked;
+        const x = document.getElementsByClassName(attrStr);
+        console.log(attrStr);
+        console.log(x);
+        
+        for(let i = 0; i < x.length; i++) {
+            x[i].checked = e.target.checked;
         }
 
+        console.log(e.target.checked);
+        console.log(x[0].checked, x[0].name);
+
+        const updateChecked = checkedHeroes.map((item, index) =>
+            (x[0].id <= index <= x[x.length-1].id) ? e.target.checked : item
+        );
+
+        setCheckedHeroes(updateChecked);
+        console.log(checkedHeroes);
+        /*
+        for(let i = startVal; i < startVal + attribute.length; i++) {
+            checkedHeroes[i] = e.target.checked;
+        }
+        
         if (e.target.checked) {
             $('.' + e.target.id).prop('checked', true);
         } else {
             $('.' + e.target.id).prop('checked', false);
-        }
+        } */
     }
 
     function _genChecked() {
@@ -115,7 +134,7 @@ function Page() {
         const heroes = str.concat(agi).concat(int);
         const names = [];
 
-        for (var i = 0; i < checkedHeroes.length; i++) {
+        for (let i = 0; i < checkedHeroes.length; i++) {
             if(checkedHeroes[i]) {
                 names.push(heroes[i]);
             }
@@ -173,7 +192,7 @@ function Page() {
             attrStr={attrStr}
             attribute={attribute}
             startVal={startVal}
-            onChange={(e) => handleAttributeChange(e, attribute, startVal)}
+            onChange={(e) => handleAttributeChange(e, attrStr)}
             onHeroChange={handleHeroChange}
             checkedHeroes={checkedHeroes}
             />
