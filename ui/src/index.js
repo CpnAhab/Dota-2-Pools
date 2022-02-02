@@ -1,68 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import $ from 'jquery';
-import { heroes } from './heroes.js'
-
-function Hero(props) {
-    
-    return (
-        <input 
-        type="checkbox" 
-        id="hero" 
-        className={props.className} 
-        name={props.name}
-        onChange={props.onChange}
-        checked={props.checked}
-        style={{background: "url(https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/" + props.name + ".png)", backgroundSize: "cover"}}
-        />
-    )
-}
-
-function Button(props) {
-
-    return (
-        <div className="buttonblock">
-            <button
-            type="submit"
-            name="op"
-            value={props.value}
-            onClick={props.onClick}
-            >
-                {props.text}
-            </button>
-        </div>
-    )
-}
-
-function HeroesByAttribute(props) {
-    
-    function renderHero(i) {
-
-        return (
-            <Hero 
-            className={props.attrStr}
-            name={props.attribute[i]}
-            key={i}
-            onChange={() => props.onHeroChange(i+props.startVal)}
-            checked={props.checkedHeroes[i+props.startVal]}
-            />
-        )
-    }
-
-    let heroes = [];
-    for (let i = 0; i < props.attribute.length; i++) {
-        heroes.push(renderHero(i));
-    }
-
-    return (
-        <>
-        <h2>
-            {props.attrStr} <input type="checkbox" id={props.attrStr} onChange={props.onChange} />
-        </h2>
-        {heroes}</>
-        )
-    }
+import { heroes } from './utils/heroes.js'
+import { Button, HeroesByAttribute } from './utils/components.js'
 
 function Page() {
 
@@ -76,7 +16,6 @@ function Page() {
         new Array(str.length + agi.length + int.length).fill(false)
     );
 
-    // Change test to /api/heroes if intending to fetch heroes from DB.
     useEffect(() => {
          console.log("fetching heroes");
          fetch('/api/heroes')
@@ -98,35 +37,14 @@ function Page() {
         setCheckedHeroes(updateChecked);
     };
 
-    function handleAttributeChange(e, attrStr) {
+    const handleAttributeChange = (e, attrStr, startVal) => {
 
         const x = document.getElementsByClassName(attrStr);
-        console.log(attrStr);
-        console.log(x);
-        
-        for(let i = 0; i < x.length; i++) {
-            x[i].checked = e.target.checked;
-        }
-
-        console.log(e.target.checked);
-        console.log(x[0].checked, x[0].name);
-
         const updateChecked = checkedHeroes.map((item, index) =>
-            (x[0].id <= index <= x[x.length-1].id) ? e.target.checked : item
+            (startVal <= index && index < startVal + x.length) ? e.target.checked : item
         );
 
         setCheckedHeroes(updateChecked);
-        console.log(checkedHeroes);
-        /*
-        for(let i = startVal; i < startVal + attribute.length; i++) {
-            checkedHeroes[i] = e.target.checked;
-        }
-        
-        if (e.target.checked) {
-            $('.' + e.target.id).prop('checked', true);
-        } else {
-            $('.' + e.target.id).prop('checked', false);
-        } */
     }
 
     function _genChecked() {
@@ -192,7 +110,7 @@ function Page() {
             attrStr={attrStr}
             attribute={attribute}
             startVal={startVal}
-            onChange={(e) => handleAttributeChange(e, attrStr)}
+            onChange={(e) => handleAttributeChange(e, attrStr, startVal)}
             onHeroChange={handleHeroChange}
             checkedHeroes={checkedHeroes}
             />
