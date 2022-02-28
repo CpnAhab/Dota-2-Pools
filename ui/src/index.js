@@ -12,6 +12,8 @@ function Page() {
     
     const [status, setStatus] = useState("");
 
+    const[textBox, setTextBox] = useState("User ID");
+
     const [checkedHeroes, setCheckedHeroes] = useState(
         new Array(str.length + agi.length + int.length).fill(false)
     );
@@ -45,6 +47,10 @@ function Page() {
         );
 
         setCheckedHeroes(updateChecked);
+    }
+
+    const handleTextChange = (e) => {
+        setTextBox(e.target.value);
     }
 
     function _genChecked() {
@@ -108,7 +114,43 @@ function Page() {
             headers:{ "Content-Type":"application/json" },
             body:JSON.stringify({"test": "test content"})
             }
-        ).then(console.log("received answer"));
+        ).then(resp => resp.json)
+        .then(i => console.log(i));
+    }
+
+    function handleLoad() {
+
+        console.log("Loading");
+        console.log(textBox);
+        fetch("/api/load", {
+            method: "POST",
+            headers:{ "Content-Type":"application/json" },
+            body:JSON.stringify({"user":textBox})
+            }
+        ).then(resp => resp.json)
+        .then(i => console.log("received" + i))
+        .then(data => console.log("Received" + data.pool));
+    }
+
+    function handleSave() {
+
+        console.log("Saving" + textBox);
+
+        let pool = [];
+        for(let i = 0; i < checkedHeroes.length; i++){
+            if (checkedHeroes[i] == true) {
+                pool.push(i);
+            }
+        }
+        console.log(pool);
+        fetch("/api/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body:JSON.stringify({"user":textBox, "pool":pool})
+        }
+        ).then(resp => resp.json)
+        .then(i => console.log("received " + i));
+
     }
 
     function renderHeroesByAttribute(attrStr, attribute, startVal) {
@@ -135,11 +177,16 @@ function Page() {
             </div>
             <div className="submissions">
                 <h1> Dota 2 Hero Pool Generator </h1>
-                <Button value={"random"} text={"Choose a random hero"} onClick={handleRandom} />
-                <Button value={"to_text"} text={"Convert to text"} onClick={handleToText} />
-                <Button value={"download"} text={"Export as .txt"} onClick={handleDownload} />
-                <Button value={"to_sb"} text={"Add to SquireBot"} onClick={handleTest} />
-                <h3>{status}</h3>
+                <div className="buttonblock">
+                    <Button text="Choose a random hero" onClick={handleRandom} />
+                    <Button text="Convert to text" onClick={handleToText} />
+                    <Button text="Export as .txt" onClick={handleDownload} />
+                    <Button text="Add to SquireBot" onClick={handleTest} />
+                    <input autoComplete="off" autoFocus className="user_input" value={textBox} onChange={handleTextChange} />
+                    <Button text="Load User Pool" onClick={handleLoad} />
+                    <Button text="Save User Pool" onClick={handleSave} />
+                    <h3>{status}</h3>
+                </div>
             </div>
         </div>
     )

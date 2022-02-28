@@ -16,16 +16,14 @@ function Hero(props) {
 export function Button(props) {
 
     return (
-        <div className="buttonblock">
-            <button
-            type="submit"
-            name="op"
-            value={props.value}
-            onClick={props.onClick}
-            >
-                {props.text}
-            </button>
-        </div>
+        <button
+        type="submit"
+        name="op"
+        value={props.value}
+        onClick={props.onClick}
+        >
+            {props.text}
+        </button>
     )
 }
 

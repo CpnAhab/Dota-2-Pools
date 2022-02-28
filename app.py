@@ -5,7 +5,7 @@ import random
 import psycopg2
 
 # UNCOMMENT FOR HOSTING
-DB_URL = os.environ['DATABASE_URL']
+# DB_URL = os.environ['DATABASE_URL']
 
 def connect(url: str):
     conn = psycopg2.connect(url, sslmode="require")
@@ -85,6 +85,69 @@ def download():
     else:
         message = "No heroes selected."
         return {"message" : message}
+
+@app.route("/api/load", methods=["POST"])
+def load_pool():
+    user = request.get_json()['user']
+
+    if user:
+
+        query = """SELECT pool FROM userpools
+            WHERE username = %s"""
+
+        # CLEAN THE INPUT BEFORE PUSHING
+        conn, curs = connect(DB_URL)
+        curs.execute(query, (user,))
+        # IT IS HIGHLY LIKELY THAT THIS RETURNS AN OBJECT THAT IS NOT PARTICULARLY PARSABLE BY REACT
+        result = curs.fetchone()
+        close(conn, curs)
+
+        return {"pool": result}
+
+    else:
+        # Decide how this is formatted.
+        return {"pool": []}
+
+@app.route("/api/save", methods=["POST"])
+def save_pool():
+    
+    response = request.get_json()
+    user = response['user']
+    # Formatting pool as an array of integer indices right now
+    pool = response['pool']
+
+    if user and pool:
+
+        query = """SELECT id FROM userpools
+            WHERE username = %s"""
+
+        # CLEAN THIS SOMEHOW
+        conn, curs = connect(DB_URL)
+        curs.execute(query, (user,))
+        verification = len(curs.fetchall())
+
+        if verification > 0:
+            query = """UPDATE userpools
+                SET pool = %s
+                WHERE username = %s"""
+            
+            curs.execute(query, (pool, user))
+
+        else:
+        
+            query = """INSERT INTO userpools (username, pool)
+                VALUES (%s, %s)"""
+
+            curs.execute(query, (user, pool))
+
+        close(conn, curs)
+
+        return {"message": f"Successfully stored {user}'s pool."}
+    
+    else:
+        return {"message": f"Failed to store {user}'s pool."}
+
+    
 
 def translate_names(pool: list) -> str:
 

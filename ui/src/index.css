@@ -54,6 +54,12 @@ h3
   cursor: pointer;
   vertical-align: middle;
 }
+.submissions input
+{
+  margin-top: 4vw;
+  margin-bottom: 1.5vw;
+  font-size: 1vw;
+}
 #hero
 {
   -webkit-appearance: none;
@@ -70,3 +76,4 @@ h3
   filter: brightness(100%);
   border: .3vw solid rgba(255, 255, 255, 0.645);
 }
+
